@@ -40,7 +40,7 @@ app.get('/', (req, res) => res.send('Hello World!'));
 app.post('/channels', (req, res) => {
   console.log(req.body);
   try {
-    dbHelper.newChannel(db, req.body.channel);
+    dbHelper.newChannel(db, req.body.name, req.body.created);
     res.status(200).send({ message: 'New channel added' });
   }
   catch (err) {
@@ -65,12 +65,40 @@ app.get('/channels', async (req, res) => {
   }
 });
 
+app.post('/users', (req, res) => {
+  console.log(req.body);
+
+  try {
+    dbHelper.newUser(db, req.body);
+    res.status(200).send({ message: 'New user added' });
+  }
+  catch (err) {
+    console.log(err);
+    res.status(503).send({ err });
+  }
+});
+
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  mainSocket = socket;
+  socket.on('joinRoom', (data) => {
+    console.log('joining room', data);
+    socket.join(data.roomName);
+  });
 
-  mainSocket.on('disconnect', () => {
+  socket.on('leaveRoom', (data) => {
+    console.log('leaving room', data);
+    socket.leave(data.roomName);
+  });
+
+  socket.on('messageToRoom', (data) => {
+    console.log(data);
+    // mainSocket.join(data.roomName);
+    // socket.broadcast.emit('newMessage', data);
+    socket.broadcast.to(data.roomName).emit('newMessage', data);
+  });
+
+  socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });

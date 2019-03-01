@@ -13,8 +13,11 @@ exports.connectToDB = (client) => {
   })
 }
 
-exports.newChannel = (db, channel) => {
-  db.collection('channels').insertOne({ channel }, (err, r) => {
+exports.newChannel = (db, name, created) => {
+  db.collection('channels').insertOne({
+    name,
+    created
+  }, (err, r) => {
     if (!err) {
       console.log('success');
       return true;
@@ -36,5 +39,19 @@ exports.getChannels = (db) => {
         resolve(channels);
       }
     })
+  })
+}
+
+exports.newUser = (db, user) => {
+  console.log(user);
+  db.collection('users').update(user, user, { upsert: true }, (err, r) => {
+    if (!err) {
+      console.log('success');
+      return true;
+    }
+    else {
+      console.log('err', err);
+      return err;
+    }
   })
 }
