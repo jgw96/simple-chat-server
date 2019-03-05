@@ -6,7 +6,7 @@ const dbHelper = require('./data/db');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoURL = 'mongodb://localhost:27017';
+const mongoURL = 'mongodb://simplechat-app:1iSgG4y0zpdU0XGJrVX9evuAKip7sJ0jhpo5Yf3iDYEt6u5kqgRppb2RHYAPg9iJspZ8ULUsY2b14jBHRnLaLw%3D%3D@simplechat-app.documents.azure.com:10255/?ssl=true';
 const dbName = 'simpleChat';
 let db = null;
 
@@ -61,7 +61,7 @@ app.get('/channels', async (req, res) => {
     }
   }
   catch (err) {
-    res.status(503).send({ err });
+    res.status(503).send({ err: err });
   }
 });
 
