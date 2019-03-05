@@ -61,6 +61,7 @@ app.get('/channels', async (req, res) => {
     }
   }
   catch (err) {
+    console.error(err);
     res.status(503).send({ err: err });
   }
 });

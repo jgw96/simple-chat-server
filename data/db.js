@@ -7,6 +7,7 @@ exports.connectToDB = (client) => {
         resolve();
       }
       else {
+        console.error(err);
         reject(err);
       }
     });
@@ -33,9 +34,11 @@ exports.getChannels = (db) => {
   return new Promise((resolve, reject) => {
     db.collection('channels').find({}).toArray((err, channels) => {
       if (err) {
+        console.error(err);
         reject(err);
       }
       else {
+        console.log(channels);
         resolve(channels);
       }
     })
