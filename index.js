@@ -6,7 +6,8 @@ const dbHelper = require('./data/db');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoURL = 'mongodb://simplechat-app:1iSgG4y0zpdU0XGJrVX9evuAKip7sJ0jhpo5Yf3iDYEt6u5kqgRppb2RHYAPg9iJspZ8ULUsY2b14jBHRnLaLw%3D%3D@simplechat-app.documents.azure.com:10255/?ssl=true';
+// const mongoURL = 'mongodb://simplechat-app:1iSgG4y0zpdU0XGJrVX9evuAKip7sJ0jhpo5Yf3iDYEt6u5kqgRppb2RHYAPg9iJspZ8ULUsY2b14jBHRnLaLw%3D%3D@simplechat-app.documents.azure.com:10255/?ssl=true';
+const mongoURL='mongodb://localhost:27017';
 const dbName = 'simpleChat';
 let db = null;
 
@@ -40,7 +41,7 @@ app.get('/', (req, res) => res.send('Hello World!'));
 app.post('/channels', (req, res) => {
   console.log(req.body);
   try {
-    dbHelper.newChannel(db, req.body.name, req.body.created);
+    dbHelper.newChannel(db, req.body.name, req.body.created, req.body.creator, req.body.users);
     res.status(200).send({ message: 'New channel added' });
   }
   catch (err) {
@@ -49,9 +50,9 @@ app.post('/channels', (req, res) => {
   }
 });
 
-app.get('/channels', async (req, res) => {
+app.post('/getChannels', async (req, res) => {
   try {
-    const channels = await dbHelper.getChannels(db);
+    const channels = await dbHelper.getChannels(db, req.body.user);
 
     if (channels) {
       res.status(200).send({ data: channels });
@@ -65,6 +66,16 @@ app.get('/channels', async (req, res) => {
     res.status(503).send({ err: err });
   }
 });
+
+app.put('/channels', (req, res) => {
+  try {
+    dbHelper.addToChannel(db, req.body.name, req.body.users);
+    res.status(200).send("success");
+  }
+  catch (err) {
+    res.status(503).send( { err: err })
+  }
+})
 
 app.post('/users', (req, res) => {
   console.log(req.body);
